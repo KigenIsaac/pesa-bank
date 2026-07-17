@@ -1,0 +1,18 @@
+# Environment
+.env
+.env.local
+.env.*.local
+.env.prod
+
+# Node / Next.js
+.next/
+**/.next/
+node_modules/
+**/node_modules/
+
+# Java / Maven
+target/
+**/target/
+
+# OS/editor
+.DS_Store
