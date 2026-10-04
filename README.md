@@ -4,7 +4,7 @@ Pesa Bank is a modular banking platform built with a Spring Boot backend and a N
 
 ## Overview
 
-This repository contains the codebase for a Kenyan-style digital banking application prototype with:
+This repository contains the codebase for a kenyan local digital banking application prototype with:
 
 - Customer account and transaction management
 - Teller deposit, withdrawal, and transfer workflows
@@ -35,22 +35,10 @@ This repository contains the codebase for a Kenyan-style digital banking applica
 ## Project Structure
 
 ```text
-.
-├── backend/
-│   ├── pom.xml
-│   └── src/
-│       ├── main/
-│       │   ├── java/
-│       │   └── resources/
-│       └── test/
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── lib/
-│   ├── package.json
-│   └── tsconfig.json
-├── .gitignore
-└── README.md
+/backend
+/frontend
+.gitignore
+README.md
 ```
 
 ## Prerequisites
@@ -158,4 +146,4 @@ This project is structured as a banking prototype and is best suited for learnin
 
 ## License
 
-This project is currently intended for local development and educational/demo use. Add an explicit license file if you plan to distribute or publish it publicly.
+This project is currently intended for local development.
