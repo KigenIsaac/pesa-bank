@@ -2,7 +2,8 @@ package co.ke.pesabank.customer.service;
 
 import co.ke.pesabank.customer.domain.Account;
 import co.ke.pesabank.customer.domain.AccountStatus;
-import co.ke.pesabank.customer.domain.Transaction;\nimport co.ke.pesabank.customer.domain.TransactionStatus;
+import co.ke.pesabank.customer.domain.Transaction;
+import co.ke.pesabank.customer.domain.TransactionStatus;
 import co.ke.pesabank.customer.repo.AccountRepository;
 import co.ke.pesabank.customer.repo.TransactionRepository;
 import co.ke.pesabank.shared.error.ApiException;
@@ -10,7 +11,6 @@ import co.ke.pesabank.shared.util.ReferenceGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
