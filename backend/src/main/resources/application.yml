@@ -26,4 +26,5 @@ pesabank:
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:3001}
   seed:
-    enabled: ${SEED_ENABLED:true}
+    enabled: ${SEED_ENABLED:false}
+    password: ${SEED_PASSWORD:}
