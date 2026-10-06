@@ -5,6 +5,10 @@ import co.ke.pesabank.customer.domain.Transaction;
 import co.ke.pesabank.customer.repo.AccountRepository;
 import co.ke.pesabank.customer.repo.TransactionRepository;
 import co.ke.pesabank.customer.service.StatementService;
+import co.ke.pesabank.customer.service.AccountService;
+import co.ke.pesabank.customer.domain.AccountType;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import co.ke.pesabank.security.domain.User;
 import co.ke.pesabank.security.web.CurrentUser;
 import co.ke.pesabank.shared.error.ApiException;
@@ -32,6 +36,14 @@ public class CustomerAccountController {
     private final AccountRepository accounts;
     private final TransactionRepository transactions;
     private final StatementService statements;
+    private final AccountService accountService;
+
+    @PostMapping("/accounts")
+    public ResponseEntity<AccountDto> openAccount(@Valid @RequestBody OpenAccountRequest request) {
+        User user = CurrentUser.get();
+        Account account = accountService.openAccount(user, request.type());
+        return ResponseEntity.ok(AccountDto.from(account));
+    }
 
     @GetMapping("/summary")
     public Map<String, Object> summary() {
@@ -125,6 +137,8 @@ public class CustomerAccountController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
                 .body(body);
     }
+
+    public record OpenAccountRequest(@NotNull AccountType type) {}
 
     public record AccountDto(UUID id, String accountNumber, String type, BigDecimal balance,
                              String currency, String status, Instant openedAt) {
