@@ -37,8 +37,8 @@ public class AuthController {
             throw ApiException.unauthorized("INVALID_CREDENTIALS", "Incorrect email or password.");
         }
 
-        if (user.getStatus() == UserStatus.SUSPENDED) {
-            throw ApiException.forbidden("ACCOUNT_SUSPENDED", "Your account is suspended. Contact support.");
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw ApiException.forbidden("ACCOUNT_NOT_ACTIVE", "Your account is not active. Contact support.");
         }
 
         user.setLastLoginAt(Instant.now());
