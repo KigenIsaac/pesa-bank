@@ -48,7 +48,7 @@ public class AccountService {
         account.setCurrency("KES");
 
         Account saved = accounts.save(account);
-        notifications.notify(user.getId(), NotificationType.ACCOUNT,
+        notifications.notify(user.getId(), NotificationType.SYSTEM,
                 "Account opened",
                 "Your " + type.name().toLowerCase() + " account " + saved.getAccountNumber() + " is now active.",
                 "/customer/accounts/" + saved.getId());
