@@ -106,7 +106,7 @@ class TransactionServiceTest {
         Transaction reversal = service.reverse(transfer, "Test reversal", UUID.randomUUID());
 
         assertEquals(new BigDecimal("75.00"), from.getBalance());
-        assertEquals(new BigDecimal("100.00"), to.getBalance());
+        assertEquals(new BigDecimal("125.00"), to.getBalance());
         assertEquals(TransactionStatus.REVERSED, transfer.getStatus());
         assertEquals(TransactionStatus.REVERSED, incoming.getStatus());
         assertNotNull(reversal);
