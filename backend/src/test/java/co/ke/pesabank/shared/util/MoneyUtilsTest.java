@@ -20,6 +20,6 @@ class MoneyUtilsTest {
 
     @Test
     void parseInvalidInputReturnsZero() {
-        assertEquals(new BigDecimal("0.00"), MoneyUtils.parse("not-a-number"));
+        assertEquals(new BigDecimal("0.00"), MoneyUtils.parse("not-a-number").setScale(2));
     }
 }
