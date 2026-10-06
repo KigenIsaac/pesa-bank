@@ -30,14 +30,14 @@ public class AdminKycController {
 
     @GetMapping
     public List<KycDto> list() {
-        return repo.findAllByOrderBySubmittedAtDesc().stream().map(KycDto::from).toList();
+        return repo.findAllByOrderBySubmittedAtDesc().stream().map(k -> KycDto.from(k, users)).toList();
     }
 
     @GetMapping("/{id}")
     public KycDto get(@PathVariable UUID id) {
         KycRecord kyc = repo.findById(id)
                 .orElseThrow(() -> ApiException.notFound("KYC_NOT_FOUND", "KYC record not found."));
-        return KycDto.from(kyc);
+        return KycDto.from(kyc, users);
     }
 
     @PostMapping("/{id}/approve")
@@ -74,12 +74,13 @@ public class AdminKycController {
             String accountPurpose, String accountPurposeOther,
             String nokName, String nokRelationship, String nokPhone) {
 
-        static KycDto from(KycRecord k) {
+        static KycDto from(KycRecord k, UserRepository users) {
             return new KycDto(
                     k.getId(),
                     k.getStatus().name(),
                     k.getFullName(),
-                    null,
+                    users.findById(k.getUserId()).map(User::getEmail).orElse(""),
+                    users.findById(k.getUserId()).map(User::getPhone).orElse(""),
                     k.getIdType() != null ? k.getIdType().name() : null,
                     k.getIdNumber(),
                     k.getKraPin(),
