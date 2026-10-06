@@ -39,6 +39,9 @@ public class DataSeeder {
     @Value("${pesabank.seed.enabled:false}")
     private boolean enabled;
 
+    @Value("${pesabank.seed.password:}")
+    private String seedPassword;
+
     @Bean
     public ApplicationRunner seedData() {
         return args -> {
@@ -48,8 +51,10 @@ public class DataSeeder {
                 return;
             }
 
-            String password = "PesaBank2024!";
-            String hash = encoder.encode(password);
+            if (seedPassword == null || seedPassword.isBlank()) {
+                throw new IllegalStateException("SEED_ENABLED=true requires SEED_PASSWORD to be configured.");
+            }
+            String hash = encoder.encode(seedPassword);
 
             User customer = createUser("Asha Wanjiru", "customer@pesabank.co.ke", "+254712345678", Role.CUSTOMER, hash);
             User teller = createUser("Brian Otieno", "teller@pesabank.co.ke", "+254723456789", Role.TELLER, hash);
@@ -109,7 +114,6 @@ public class DataSeeder {
 
             log.info("Seeded demo accounts — customer: {} | teller: {} | admin: {}",
                     customer.getEmail(), teller.getEmail(), admin.getEmail());
-            log.info("All demo passwords: {}", password);
         };
     }
 
