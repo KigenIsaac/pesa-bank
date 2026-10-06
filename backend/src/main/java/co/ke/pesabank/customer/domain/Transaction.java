@@ -44,5 +44,9 @@ public class Transaction extends BaseEntity {
     private TransactionStatus status = TransactionStatus.COMPLETED;
 
     private UUID performedBy;
+
+    /** Links the two ledger entries created by an internal transfer. */
+    private UUID relatedTransactionId;
+
     private String reversalReason;
 }
