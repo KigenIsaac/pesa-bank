@@ -19,6 +19,10 @@ public abstract class BaseEntity {
     @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
+    @Version
+    @Column(nullable = false)
+    private Long version = 0L;
+
     private Instant updatedAt;
 
     @PreUpdate
