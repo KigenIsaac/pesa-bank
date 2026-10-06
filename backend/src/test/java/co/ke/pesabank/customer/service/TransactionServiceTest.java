@@ -91,9 +91,9 @@ class TransactionServiceTest {
         incoming.setAccountId(to.getId());
         incoming.setAmount(new BigDecimal("25.00"));
         incoming.setRelatedTransactionId(transfer.getId());
-        incoming.setStatus(co.ke.pesabank.customer.domain.TransactionStatus.COMPLETED);
-        transfer.setRelatedTransactionId(incoming.getId());
-        when(transactions.findById(incoming.getId())).thenReturn(java.util.Optional.of(incoming));
+        incoming.setStatus(TransactionStatus.COMPLETED);
+        when(transactions.findById(transfer.getRelatedTransactionId()))
+                .thenReturn(java.util.Optional.of(incoming));
 
         Transaction reversal = service.reverse(transfer, "Test reversal", UUID.randomUUID());
 
