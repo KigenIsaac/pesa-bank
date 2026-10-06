@@ -212,6 +212,26 @@ npm run build
 
 GitHub Actions runs these checks automatically on pushes and pull requests to `master`.
 
+## Clean-start demo walkthrough
+
+For a complete local demonstration, use a fresh PostgreSQL database and intentionally enable the demo seed so the workflow has an administrator and teller available to review and fund a newly registered customer.
+
+1. Configure `SEED_ENABLED=true` and a local `SEED_PASSWORD`.
+2. Start PostgreSQL and the Spring Boot backend.
+3. Start the Next.js frontend.
+4. Register a new customer from `/register`.
+5. Complete the KYC form from the customer dashboard.
+6. Sign in as the seeded administrator and open **KYC review**.
+7. Approve the customer's KYC.
+8. Return to the customer account and open a **Savings** or **Current** account.
+9. Sign in as the seeded teller and open a till.
+10. Search for the customer's account number and make a cash deposit.
+11. Return to the customer account and verify the new balance and transaction.
+12. Use the transfer or payments screens to exercise a funded account.
+13. Download a statement to verify the resulting ledger entries.
+
+The seeded administrator and teller exist only to make the local demonstration workflow testable. Keep demo seeding disabled in production.
+
 ## Security model
 
 The application uses:
