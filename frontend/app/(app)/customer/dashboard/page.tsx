@@ -205,9 +205,18 @@ export default function CustomerDashboardPage() {
             ))}
           </ul>
         ) : accounts.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-slate-500">
-            You don&apos;t have any accounts yet.
-          </p>
+          <div className="px-5 py-10 text-center">
+            <p className="text-sm font-semibold text-slate-800">You don&apos;t have any accounts yet.</p>
+            <p className="mt-1 text-sm text-slate-500">
+              If your KYC is approved, you can open your first account now.
+            </p>
+            <Link
+              href="/customer/accounts/open"
+              className="mt-4 inline-block rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
+            >
+              Open an account
+            </Link>
+          </div>
         ) : (
           <ul className="divide-y divide-slate-100">
             {accounts.slice(0, 3).map((a) => (
