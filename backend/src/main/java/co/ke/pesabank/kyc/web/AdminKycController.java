@@ -4,6 +4,7 @@ import co.ke.pesabank.kyc.domain.*;
 import co.ke.pesabank.kyc.repo.KycRepository;
 import co.ke.pesabank.kyc.service.KycService;
 import co.ke.pesabank.security.domain.User;
+import co.ke.pesabank.security.repo.UserRepository;
 import co.ke.pesabank.security.web.CurrentUser;
 import co.ke.pesabank.shared.audit.AuditService;
 import co.ke.pesabank.shared.error.ApiException;
@@ -25,6 +26,7 @@ public class AdminKycController {
     private final KycRepository repo;
     private final KycService service;
     private final AuditService audit;
+    private final UserRepository users;
 
     @GetMapping
     public List<KycDto> list() {
@@ -59,7 +61,7 @@ public class AdminKycController {
     public record RejectRequest(@NotBlank String reason) {}
 
     public record KycDto(
-            UUID id, String status, String customerName, String email,
+            UUID id, String status, String customerName, String email, String phone,
             String idType, String idNumber, String kraPin,
             java.time.Instant submittedAt, java.time.Instant reviewedAt,
             String rejectionReason, boolean pep, String pepDetails,
