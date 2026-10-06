@@ -2,7 +2,7 @@ package co.ke.pesabank.customer.service;
 
 import co.ke.pesabank.customer.domain.Account;
 import co.ke.pesabank.customer.domain.AccountStatus;
-import co.ke.pesabank.customer.domain.Transaction;
+import co.ke.pesabank.customer.domain.Transaction;\nimport co.ke.pesabank.customer.domain.TransactionStatus;
 import co.ke.pesabank.customer.repo.AccountRepository;
 import co.ke.pesabank.customer.repo.TransactionRepository;
 import co.ke.pesabank.shared.error.ApiException;
@@ -76,7 +76,32 @@ class TransactionServiceTest {
         assertNotNull(tx);
         verify(accounts).save(from);
         verify(accounts).save(to);
-        verify(transactions, times(2)).save(any(Transaction.class));
+        verify(transactions, times(4)).save(any(Transaction.class));
+        assertEquals(tx.getId(), null == tx.getRelatedTransactionId() ? null : tx.getRelatedTransactionId());
+    }
+
+    @Test
+    void transferReversalRestoresSourceAndDebitsDestination() {
+        Account from = accountWithBalance("75.00");
+        Account to = accountWithBalance("125.00");
+
+        Transaction transfer = service.transfer(from, to, new BigDecimal("25.00"),
+                "Transfer", UUID.randomUUID(), "TEST");
+        Transaction incoming = new Transaction();
+        incoming.setAccountId(to.getId());
+        incoming.setAmount(new BigDecimal("25.00"));
+        incoming.setRelatedTransactionId(transfer.getId());
+        incoming.setStatus(co.ke.pesabank.customer.domain.TransactionStatus.COMPLETED);
+        transfer.setRelatedTransactionId(incoming.getId());
+        when(transactions.findById(incoming.getId())).thenReturn(java.util.Optional.of(incoming));
+
+        Transaction reversal = service.reverse(transfer, "Test reversal", UUID.randomUUID());
+
+        assertEquals(new BigDecimal("100.00"), from.getBalance());
+        assertEquals(new BigDecimal("100.00"), to.getBalance());
+        assertEquals(TransactionStatus.REVERSED, transfer.getStatus());
+        assertEquals(TransactionStatus.REVERSED, incoming.getStatus());
+        assertNotNull(reversal);
     }
 
     private Account accountWithBalance(String balance) {
