@@ -33,12 +33,16 @@ class TransactionServiceTest {
     @BeforeEach
     void setUp() {
         service = new TransactionService(accounts, transactions, references);
+    }
+
+    private void stubTransactionSave() {
         when(references.generate(any())).thenReturn("TXN-TEST");
         when(transactions.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
     }
 
     @Test
     void depositIncreasesBalanceAndRecordsTransaction() {
+        stubTransactionSave();
         Account account = accountWithBalance("100.00");
 
         Transaction tx = service.deposit(account, new BigDecimal("25.00"),
@@ -65,6 +69,7 @@ class TransactionServiceTest {
 
     @Test
     void transferUpdatesBothAccountsAtomically() {
+        stubTransactionSave();
         Account from = accountWithBalance("100.00");
         Account to = accountWithBalance("40.00");
 
@@ -77,11 +82,12 @@ class TransactionServiceTest {
         verify(accounts).save(from);
         verify(accounts).save(to);
         verify(transactions, times(4)).save(any(Transaction.class));
-        assertEquals(tx.getId(), null == tx.getRelatedTransactionId() ? null : tx.getRelatedTransactionId());
+        assertNotNull(tx.getRelatedTransactionId());
     }
 
     @Test
     void transferReversalRestoresSourceAndDebitsDestination() {
+        stubTransactionSave();
         Account from = accountWithBalance("75.00");
         Account to = accountWithBalance("125.00");
 
@@ -94,6 +100,8 @@ class TransactionServiceTest {
         incoming.setStatus(TransactionStatus.COMPLETED);
         when(transactions.findById(transfer.getRelatedTransactionId()))
                 .thenReturn(java.util.Optional.of(incoming));
+        when(accounts.findById(from.getId())).thenReturn(java.util.Optional.of(from));
+        when(accounts.findById(to.getId())).thenReturn(java.util.Optional.of(to));
 
         Transaction reversal = service.reverse(transfer, "Test reversal", UUID.randomUUID());
 
