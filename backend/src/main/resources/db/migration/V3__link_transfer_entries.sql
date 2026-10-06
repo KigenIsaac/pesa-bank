@@ -1,0 +1,2 @@
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS related_transaction_id UUID REFERENCES transactions(id);
+CREATE INDEX IF NOT EXISTS idx_tx_related_transaction ON transactions(related_transaction_id);
