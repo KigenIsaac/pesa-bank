@@ -1,49 +1,105 @@
 # Pesa Bank
 
-Pesa Bank is a modular banking platform built with a Spring Boot backend and a Next.js frontend. The project includes customer banking flows, teller operations, admin management, KYC, support tickets, notifications, and a JWT-based security layer.
+[![CI](https://github.com/KigenIsaac/pesa-bank/actions/workflows/ci.yml/badge.svg)](https://github.com/KigenIsaac/pesa-bank/actions/workflows/ci.yml)
 
-## Overview
+Pesa Bank is a modular digital banking application prototype built with a **Spring Boot 3 backend** and **Next.js 14 frontend**. It models customer banking, teller operations, administration, KYC, payments, notifications, support, auditing, and role-based security.
 
-This repository contains the codebase for a kenyan local digital banking application prototype with:
+> **Portfolio project:** This is a learning and demonstration system, not a production banking platform.
 
-- Customer account and transaction management
-- Teller deposit, withdrawal, and transfer workflows
-- Admin dashboards and compliance oversight
-- KYC review flows
-- Support ticket handling
-- Notification support
-- Role-based authentication and authorization
-- PostgreSQL persistence with Flyway migrations
+## What it demonstrates
 
-## Tech Stack
+- Layered Spring Boot backend with domain, repository, service, and web layers
+- JWT authentication with BCrypt password hashing and role-based authorization
+- Customer, teller, and administrator workflows
+- Account balances, deposits, withdrawals, transfers, reversals, and transaction history
+- KYC submission and review workflows
+- Teller till and end-of-day reporting concepts
+- Payment/payee management
+- Notifications and customer support tickets
+- Audit logging
+- PostgreSQL persistence and Flyway migrations
+- Next.js App Router frontend with TypeScript
+- Optimistic locking for concurrent entity updates
+- Automated backend tests and frontend type-check/build verification
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Browser["Next.js / React / TypeScript"] -->|HTTP + JSON| API["Spring Boot REST API"]
+    API --> Security["Spring Security + JWT"]
+    API --> Domain["Domain Services"]
+    Domain --> DB["PostgreSQL"]
+    DB --> Flyway["Flyway Migrations"]
+    Domain --> Audit["Audit Logging"]
+```
+
+### Backend modules
+
+```text
+co.ke.pesabank
+├── admin
+├── customer
+├── kyc
+├── notification
+├── payee
+├── security
+├── shared
+├── support
+└── teller
+```
+
+Each major module follows the same general separation:
+
+```text
+web/controller → service → repository → database
+                    ↓
+                  domain
+```
+
+## Tech stack
 
 ### Backend
+
 - Java 21
-- Spring Boot 3.3.x
+- Spring Boot 3.3.4
 - Spring Security
-- Spring Data JPA
+- Spring Data JPA / Hibernate
 - PostgreSQL
 - Flyway
-- JWT authentication
+- JJWT
+- BCrypt
+- Maven
 
 ### Frontend
-- Next.js 14
+
+- Next.js 14.2
 - React 18
 - TypeScript
 - App Router
+- npm
 
-## Project Structure
+## Repository structure
 
 ```text
-/backend
-/frontend
-.gitignore
-README.md
+pesa-bank/
+├── backend/
+│   ├── src/main/java/co/ke/pesabank/
+│   ├── src/main/resources/
+│   │   └── db/migration/
+│   └── pom.xml
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── lib/
+│   └── package.json
+├── .env.example
+├── .github/workflows/ci.yml
+├── .gitignore
+└── README.md
 ```
 
 ## Prerequisites
-
-Before running the project, make sure you have:
 
 - Java 21+
 - Maven 3.9+
@@ -51,99 +107,172 @@ Before running the project, make sure you have:
 - npm
 - PostgreSQL 14+
 
-## Environment Variables
+## Configuration
 
-The backend expects the following environment variables to be available before startup:
+Copy the environment template and replace the placeholder values:
 
 ```bash
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=pesabank
-DB_USER=postgres
-DB_PASSWORD=your_password
-JWT_SECRET=your_secure_secret
-JWT_EXPIRATION_MINUTES=480
-CORS_ORIGINS=http://localhost:3000
+cp .env.example .env
+```
+
+The important variables are:
+
+```text
+DB_HOST
+DB_PORT
+DB_NAME
+DB_USER
+DB_PASSWORD
+JWT_SECRET
+JWT_EXPIRATION_MINUTES
+CORS_ORIGINS
+SEED_ENABLED
+SEED_PASSWORD
+```
+
+**Demo seeding is disabled by default.** If you intentionally enable it for a local demonstration:
+
+```text
 SEED_ENABLED=true
+SEED_PASSWORD=<your-local-demo-password>
 ```
 
-You can place these in your shell environment or in a `.env` file if your local environment supports it.
-
-## Run the Backend
-
-From the project root:
-
-```bash
-cd backend
-mvn clean install
-mvn spring-boot:run
-```
-
-The backend will start on the default Spring Boot port, usually:
-
-- http://localhost:8080
-
-## Run the Frontend
-
-From the project root:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend will run on:
-
-- http://localhost:3000
+The seed creates demo users for the customer, teller, and admin roles. The password is supplied through configuration and is never stored in source control or logged.
 
 ## Database
 
-The project is configured to use PostgreSQL. Flyway migration scripts are located in:
+Create a PostgreSQL database matching your environment configuration:
+
+```text
+pesabank
+```
+
+Database migrations are stored in:
 
 ```text
 backend/src/main/resources/db/migration/
 ```
 
-Make sure the database exists and is reachable using the variables configured above.
+Production configuration enables Flyway and validates the JPA schema.
 
-## Features
+## Run locally
 
-### Customer Module
-- Account lookup
-- Statements
+### Backend
+
+```bash
+cd backend
+mvn clean test
+mvn spring-boot:run
+```
+
+Backend:
+
+```text
+http://localhost:8080
+```
+
+### Frontend
+
+In another terminal:
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Frontend:
+
+```text
+http://localhost:3000
+```
+
+## Testing and verification
+
+Backend unit tests:
+
+```bash
+cd backend
+mvn test
+```
+
+Frontend type-check:
+
+```bash
+cd frontend
+npx tsc --noEmit
+```
+
+Frontend production build:
+
+```bash
+cd frontend
+npm run build
+```
+
+GitHub Actions runs these checks automatically on pushes and pull requests to `master`.
+
+## Security model
+
+The application uses:
+
+- Stateless JWT authentication
+- BCrypt password hashing
+- Role-based endpoint authorization
+- Active-user checks during JWT authentication
+- Server-side account ownership checks
+- Validation of incoming request payloads
+- Centralized API error handling
+- CORS configuration
+- Optimistic locking for persisted entities
+- Audit records for important user actions
+
+This project intentionally does **not** claim to implement the controls required for a real financial institution, such as full regulatory compliance, production key management, fraud detection, hardware-backed secrets, high-availability infrastructure, or comprehensive security testing.
+
+## Main workflows
+
+### Customer
+
+- Register and authenticate
+- View accounts and balances
+- View statements and transactions
+- Transfer funds
+- Make payment requests
+- Submit and track KYC
+- View notifications
+- Open support tickets
+- Manage profile/security settings
+
+### Teller
+
+- Customer lookup
+- Deposits and withdrawals
 - Transfers
-- Payment flows
-- Profile management
-
-### Teller Module
-- Deposit workflows
-- Withdrawal workflows
-- Reversals
 - Till management
-- EOD reporting
+- Reversals
+- End-of-day reporting
 
-### Admin Module
+### Administrator
+
 - User management
-- Audit access
+- Transaction oversight
+- Reversal review
+- KYC review
+- Compliance alerts
+- Audit inspection
 - Reports
-- Compliance management
-- Reversals and settings
+- Bank settings
 
-### KYC Module
-- KYC submission and review
-- Decision handling
-- Status tracking
+## Engineering notes
 
-### Support and Notifications
-- Support tickets
-- Message threads
-- Notification delivery
+### Transaction consistency
 
-## Notes
+Money-changing operations execute inside Spring transactions. Account entities also use optimistic locking so concurrent updates can be detected instead of silently overwriting a newer entity version.
 
-This project is structured as a banking prototype and is best suited for learning, mock development, and demonstration work. It is not a production-ready implementation without additional hardening, security reviews, and operational setup.
+### Production boundary
+
+Pesa Bank is deliberately presented as a **banking-system prototype**. It demonstrates architecture and engineering practices without pretending to be safe for real customer funds.
 
 ## License
 
-This project is currently intended for local development.
+No open-source license is currently declared. The repository is publicly viewable for portfolio and demonstration purposes.
