@@ -134,6 +134,21 @@ export default function KycStatusPage() {
         </div>
       ) : null}
 
+      {record.status === "APPROVED" ? (
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+          <h2 className="text-sm font-semibold text-emerald-900">Next step: open your bank account</h2>
+          <p className="mt-1 text-sm text-emerald-800">
+            Your identity has been verified. Open a savings or current account to start banking.
+          </p>
+          <Link
+            href="/customer/accounts/open"
+            className="mt-4 inline-block rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500"
+          >
+            Open an account
+          </Link>
+        </div>
+      ) : null}
+
       {/* Submitted details summary */}
       {record.summary && record.status !== "NOT_STARTED" ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
